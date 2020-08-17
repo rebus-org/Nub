@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace Crux.Tests
+namespace Nub.Tests
 {
     [TestFixture]
     public class TestRegistrationsByKey

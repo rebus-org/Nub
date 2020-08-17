@@ -4,9 +4,9 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 // ReSharper disable SimplifyLinqExpressionUseAll
 
-namespace Crux
+namespace Nub
 {
-    public static class CruxServiceCollectionExtensions
+    public static class NubServiceCollectionExtensions
     {
         /// <summary>
         /// Adds a singleton of type <typeparamref name="TService"/> with the key given by <paramref name="key"/>. Uses the factory <paramref name="factory"/> to resolve the instance
@@ -103,6 +103,5 @@ namespace Crux
                 }
             }
         }
-
     }
 }

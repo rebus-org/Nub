@@ -4,5 +4,5 @@ before_build:
   - appveyor-retry dotnet restore -v Minimal
 
 build_script:
-  - dotnet build Crux -c Release 
-  - dotnet build Crux.Tests -c Release 
+  - dotnet build Nub -c Release 
+  - dotnet build Nub.Tests -c Release 

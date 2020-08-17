@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crux", "Crux\Crux.csproj", "{43CF2BBB-AFA8-42E0-97A9-6C4803CA6F9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nub", "Nub\Nub.csproj", "{43CF2BBB-AFA8-42E0-97A9-6C4803CA6F9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crux.Tests", "Crux.Tests\Crux.Tests.csproj", "{2BD490A4-2C4F-477E-A351-FB83CF368151}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nub.Tests", "Nub.Tests\Nub.Tests.csproj", "{2BD490A4-2C4F-477E-A351-FB83CF368151}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31946B52-4E8E-48FA-9B72-9CC67FBEED8F}"
 	ProjectSection(SolutionItems) = preProject
