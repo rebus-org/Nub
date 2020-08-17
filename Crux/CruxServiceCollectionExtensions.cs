@@ -8,30 +8,17 @@ namespace Crux
 {
     public static class CruxServiceCollectionExtensions
     {
-        public static IServiceCollection DecorateKeyed<T>(this IServiceCollection services, string key, Func<IServiceProvider, T, T> decorator)
+        /// <summary>
+        /// Adds a singleton of type <typeparamref name="TService"/> with the key given by <paramref name="key"/>. Uses the factory <paramref name="factory"/> to resolve the instance
+        /// </summary>
+        public static IServiceCollection AddSingletonWithKey<TService>(this IServiceCollection services, string key, Func<IServiceProvider, TService> factory)
         {
-            if (!services.Any(s => s.ServiceType == typeof(KeyedServiceHolder<T>)))
+            if (!services.Any(s => s.ServiceType == typeof(KeyedServiceHolder<TService>)))
             {
-                throw new InvalidOperationException($"Cannot decorate {typeof(T)} service with key {key}, because it has not been registered");
+                services.AddSingleton(new KeyedServiceHolder<TService>());
             }
 
-            services.Decorate<KeyedServiceHolder<T>>((holder, provider) =>
-            {
-                holder.Decorate(key, decorator);
-                return holder;
-            });
-
-            return services;
-        }
-
-        public static IServiceCollection AddSingletonWithKey<T>(this IServiceCollection services, string key, Func<IServiceProvider, T> factory)
-        {
-            if (!services.Any(s => s.ServiceType == typeof(KeyedServiceHolder<T>)))
-            {
-                services.AddSingleton(new KeyedServiceHolder<T>());
-            }
-
-            services.Decorate<KeyedServiceHolder<T>>((holder, provider) =>
+            services.Decorate<KeyedServiceHolder<TService>>((holder, provider) =>
             {
                 holder.Add(key, factory);
                 return holder;
@@ -40,16 +27,40 @@ namespace Crux
             return services;
         }
 
-        public static T GetServiceByKey<T>(this IServiceProvider provider, string key)
+        /// <summary>
+        /// Gets the instance of type <typeparamref name="TService"/> with the key given by <paramref name="key"/>. Throws an <see cref="ArgumentException"/> if
+        /// no matching registration could be found
+        /// </summary>
+        public static TService GetServiceByKey<TService>(this IServiceProvider provider, string key)
         {
-            var holder = provider.GetService<KeyedServiceHolder<T>>();
+            var holder = provider.GetService<KeyedServiceHolder<TService>>();
 
             if (holder == null)
             {
-                throw new ArgumentException($"Cannot find keyed service holder for services of type {typeof(T)} - tried to get keyed service with key '{key}', but it doesn't look like any keyed services were registered");
+                throw new ArgumentException($"Cannot find keyed service holder for services of type {typeof(TService)} - tried to get keyed service with key '{key}', but it doesn't look like any keyed services were registered");
             }
 
             return holder.Get(key, provider);
+        }
+
+        /// <summary>
+        /// Adds a decorator for service of type <typeparamref name="TService"/> and the key given by <paramref name="key"/>. Uses the decorator function <paramref name="decorator"/> to decorate the
+        /// returned instance.
+        /// </summary>
+        public static IServiceCollection DecorateKeyed<TService>(this IServiceCollection services, string key, Func<IServiceProvider, TService, TService> decorator)
+        {
+            if (!services.Any(s => s.ServiceType == typeof(KeyedServiceHolder<TService>)))
+            {
+                throw new InvalidOperationException($"Cannot decorate {typeof(TService)} service with key {key}, because it has not been registered");
+            }
+
+            services.Decorate<KeyedServiceHolder<TService>>((holder, provider) =>
+            {
+                holder.Decorate(key, decorator);
+                return holder;
+            });
+
+            return services;
         }
 
         class KeyedServiceHolder<T> : IDisposable
