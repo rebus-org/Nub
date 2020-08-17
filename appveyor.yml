@@ -1,3 +1,8 @@
-before_build:
-  - nuget restore
+image: Visual Studio 2019
 
+before_build:
+  - appveyor-retry dotnet restore -v Minimal
+
+build_script:
+  - dotnet build Crux -c Release 
+  - dotnet build Crux.Tests -c Release 
