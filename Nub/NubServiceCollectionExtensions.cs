@@ -66,6 +66,7 @@ namespace Nub
         class KeyedServiceHolder<T> : IDisposable
         {
             readonly ConcurrentDictionary<string, Lazy<Func<IServiceProvider, T>>> _factories = new ConcurrentDictionary<string, Lazy<Func<IServiceProvider, T>>>();
+            readonly ConcurrentStack<IDisposable> _disposables = new ConcurrentStack<IDisposable>();
 
             public void Add(string key, Func<IServiceProvider, T> factory)
             {
@@ -77,7 +78,7 @@ namespace Nub
             public T Get(string key, IServiceProvider provider)
             {
                 return _factories.TryGetValue(key, out var lazy)
-                    ? lazy.Value(provider)
+                    ? GetLazyValue(provider, lazy)
                     : throw new ArgumentException($"Could not find a registered instance of {typeof(T)} with key '{key}'");
             }
 
@@ -87,19 +88,26 @@ namespace Nub
                     ? lazy
                     : throw new InvalidOperationException($"Tried to add decorator for {typeof(T)}, but no lazy factory could be found for key {key}");
 
-                _factories[key] = new Lazy<Func<IServiceProvider, T>>(() => provider => decorator(provider, existing.Value(provider)));
+                _factories[key] = new Lazy<Func<IServiceProvider, T>>(() => provider => decorator(provider, GetLazyValue(provider, existing)));
+            }
+
+            T GetLazyValue(IServiceProvider provider, Lazy<Func<IServiceProvider, T>> lazy)
+            {
+                var value = lazy.Value(provider);
+
+                if (value is IDisposable disposable)
+                {
+                    _disposables.Push(disposable);
+                }
+
+                return value;
             }
 
             public void Dispose()
             {
-                foreach (var factory in _factories.Values)
+                while (_disposables.TryPop(out var disposable))
                 {
-                    if (!factory.IsValueCreated) continue;
-
-                    if (factory.Value is IDisposable disposable)
-                    {
-                        disposable.Dispose();
-                    }
+                    disposable.Dispose();
                 }
             }
         }
