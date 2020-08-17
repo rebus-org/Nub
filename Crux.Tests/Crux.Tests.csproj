@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="microsoft.extensions.dependencyinjection" Version="3.1.7" />
+    <PackageReference Include="microsoft.net.test.sdk" Version="16.7.0" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="nunit3testadapter" Version="3.17.0" />
+    <PackageReference Include="testy" Version="0.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Crux\Crux.csproj" />
+  </ItemGroup>
+
+</Project>
