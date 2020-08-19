@@ -27,6 +27,25 @@ namespace Nub.Tests
         }
 
         [Test]
+        public void CanDecorateAllServicesRegisteredWithKey()
+        {
+            var services = new ServiceCollection();
+
+            services.AddSingletonWithKey("blub", p => "blub");
+            services.AddSingletonWithKey("bløb", p => "bløb");
+
+            services.DecorateKeyed<string>((p, str) => $"DECORATED{str}");
+
+            using var provider = services.BuildServiceProvider();
+
+            var blub = provider.GetServiceByKey<string>("blub");
+            var bløb = provider.GetServiceByKey<string>("bløb");
+
+            Assert.That(blub, Is.EqualTo("DECORATEDblub"));
+            Assert.That(bløb, Is.EqualTo("DECORATEDbløb"));
+        }
+
+        [Test]
         public void CanHandleKeyedThings()
         {
             var services = new ServiceCollection();

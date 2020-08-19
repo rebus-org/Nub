@@ -8,3 +8,6 @@
 
 ## 0.0.3
 * Implement proper disposal
+
+## 0.0.4
+* Enable decoration of all keyed instances
