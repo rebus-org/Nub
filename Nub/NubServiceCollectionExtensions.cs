@@ -95,6 +95,7 @@ namespace Nub
         class KeyedServiceHolder<T> : IDisposable
         {
             readonly ConcurrentDictionary<string, Lazy<Func<IServiceProvider, T>>> _factories = new ConcurrentDictionary<string, Lazy<Func<IServiceProvider, T>>>();
+            readonly ConcurrentDictionary<string, T> _instances = new ConcurrentDictionary<string, T>();
             readonly ConcurrentStack<IDisposable> _disposables = new ConcurrentStack<IDisposable>();
 
             public void Add(string key, Func<IServiceProvider, T> factory)
@@ -112,9 +113,9 @@ namespace Nub
                 if (key == null) throw new ArgumentNullException(nameof(key));
                 if (provider == null) throw new ArgumentNullException(nameof(provider));
 
-                return _factories.TryGetValue(key, out var lazy)
+                return _instances.GetOrAdd(key, _ => _factories.TryGetValue(key, out var lazy)
                     ? GetLazyValue(provider, lazy)
-                    : throw new ArgumentException($"Could not find a registered instance of {typeof(T)} with key '{key}'");
+                    : throw new ArgumentException($"Could not find a registered instance of {typeof(T)} with key '{key}'"));
             }
 
             public void Decorate(Func<IServiceProvider, T, T> decorator)

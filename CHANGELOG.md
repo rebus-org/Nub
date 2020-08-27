@@ -11,3 +11,6 @@
 
 ## 0.0.4
 * Enable decoration of all keyed instances
+
+## 0.0.5
+* Fix pretty grave BUG that would make resolution behave as if everything was transient
